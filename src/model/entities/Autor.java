@@ -1,7 +1,7 @@
 package model.entities;
 
 import java.io.Serializable;
-
+import java.util.List;
 
 public class Autor implements Serializable {
 
@@ -9,7 +9,8 @@ public class Autor implements Serializable {
 
 	private Integer id;
 	private String nome;
-	
+	private List<Livro> livros;
+	private Livro livro;
 
 	public Autor() {
 
@@ -21,7 +22,14 @@ public class Autor implements Serializable {
 		this.nome = nome;
 	}
 
-	
+	public Autor(Integer id, String nome, List<Livro> livros, Livro livro) {
+
+		this.id = id;
+		this.nome = nome;
+		this.livros = livros;
+		this.livro = livro;
+	}
+
 	public Integer getId() {
 		return id;
 	}
@@ -38,18 +46,39 @@ public class Autor implements Serializable {
 		this.nome = nome;
 	}
 
-	
+	public List<Livro> getLivros() {
+		return livros;
+	}
+
+	public void setLivros(List<Livro> livros) {
+		this.livros = livros;
+	}
+
+	public Livro getLivro() {
+		return livro;
+	}
+
+	public void setLivro(Livro livro) {
+		this.livro = livro;
+	}
+
+	public void adicionarLivro(Livro livro) {
+		this.livros.add(livro);
+
+	}
+
+	public void removerLivro(Livro livro) {
+		this.livros.remove(livro);
+	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + id;
 		return result;
 	}
 
-	
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
