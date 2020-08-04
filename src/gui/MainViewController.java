@@ -36,7 +36,7 @@ public class MainViewController implements Initializable {
 
 	@FXML
 	public void onMenuItemAutorAction() {
-		System.out.println("onMenuItemAutorAction");
+		loadView("/gui/AutorList.fxml");
 	}
 
 	@FXML
