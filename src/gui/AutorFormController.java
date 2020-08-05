@@ -10,8 +10,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import model.entities.Autor;
 
 public class AutorFormController implements Initializable{
+	
+	private Autor entity;
+	
 	
 	@FXML
 	private TextField txtId;
@@ -27,6 +31,11 @@ public class AutorFormController implements Initializable{
 	
 	@FXML
 	private Button btCancel;
+	
+	public void setAutor(Autor entity) {
+		this.entity = entity;
+		
+	}
 	
 	@FXML
 	public void onBtSaveAction() {
@@ -49,6 +58,15 @@ public class AutorFormController implements Initializable{
 	private void initializeNodes() {
 		Constraints.setTextFieldInteger(txtId);
 		Constraints.setTextFieldMaxLength(txtNome, 30);
+	}
+	
+	public void updateFormDate() {
+		if(entity == null) {
+			throw new IllegalStateException("Entidade está vazia");
+		}
+		
+		txtId.setText(String.valueOf(entity.getId()));
+		txtNome.setText(entity.getNome());
 	}
 
 }

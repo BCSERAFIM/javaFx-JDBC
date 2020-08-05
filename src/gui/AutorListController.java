@@ -51,7 +51,8 @@ public class AutorListController implements Initializable {
 	public void onBtNewAction(ActionEvent event) {
 		
 		Stage parentStage = Utils.currentStage(event);
-		createDialogForm("/gui/AutorForm.fxml", parentStage);
+		Autor obj = new Autor();
+		createDialogForm(obj,"/gui/AutorForm.fxml", parentStage);
 		
 	}
 	
@@ -86,10 +87,14 @@ public class AutorListController implements Initializable {
 		tableViewAutor.setItems(obsList);
 	}
 	
-	private void createDialogForm(String absoluteName, Stage parentStage) {
+	private void createDialogForm(Autor obj, String absoluteName, Stage parentStage) {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource(absoluteName));
 			Pane pane = loader.load();
+			
+			AutorFormController controller = loader.getController();
+			controller.setAutor(obj);
+			controller.updateFormDate();
 			
 			Stage dialogStage = new Stage();
 			dialogStage.setTitle("Entrar com os dados do Autor");
