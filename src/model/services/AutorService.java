@@ -22,5 +22,9 @@ public class AutorService {
 			dao.update(autor);
 		}
 	}
+	
+	public void remove(Autor obj) {
+		dao.deleteById(obj.getId());
+	}
 
 }
