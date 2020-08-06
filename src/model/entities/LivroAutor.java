@@ -7,37 +7,17 @@ public class LivroAutor implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Integer id;
-	private Integer idLivro;
-	private Integer idAutor;
+	private String titulo;
 
-	private Livro livro;
 	private Autor autor;
 
 	public LivroAutor() {
 
 	}
 
-	public LivroAutor(Integer id, Integer idLivro, Integer idAutor, Livro livro) {
-
+	public LivroAutor(Integer id, String titulo, Autor autor) {
 		this.id = id;
-		this.idLivro = idLivro;
-		this.idAutor = idAutor;
-		this.livro = livro;
-	}
-
-	public LivroAutor(Integer id, Integer idLivro, Integer idAutor) {
-
-		this.id = id;
-		this.idLivro = idLivro;
-		this.idAutor = idAutor;
-	}
-
-	public LivroAutor(Integer id, Integer idLivro, Integer idAutor, Livro livro, Autor autor) {
-
-		this.id = id;
-		this.idLivro = idLivro;
-		this.idAutor = idAutor;
-		this.livro = livro;
+		this.titulo = titulo;
 		this.autor = autor;
 	}
 
@@ -49,28 +29,12 @@ public class LivroAutor implements Serializable {
 		this.id = id;
 	}
 
-	public Integer getIdLivro() {
-		return idLivro;
+	public String getTitulo() {
+		return titulo;
 	}
 
-	public void setIdLivro(Integer idLivro) {
-		this.idLivro = idLivro;
-	}
-
-	public Integer getIdAutor() {
-		return idAutor;
-	}
-
-	public void setIdAutor(Integer idAutor) {
-		this.idAutor = idAutor;
-	}
-
-	public Livro getLivro() {
-		return livro;
-	}
-
-	public void setLivro(Livro livro) {
-		this.livro = livro;
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
 	}
 
 	public Autor getAutor() {
@@ -82,8 +46,33 @@ public class LivroAutor implements Serializable {
 	}
 
 	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LivroAutor other = (LivroAutor) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+
+	@Override
 	public String toString() {
-		return "LivroAutor [id=" + id + ", idLivro=" + idLivro + ", idAutor=" + idAutor + "]";
+		return "LivroAutor [id=" + id + ", titulo=" + titulo + ", autor=" + autor + "]";
 	}
 
 }

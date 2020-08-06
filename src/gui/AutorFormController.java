@@ -4,17 +4,25 @@ package gui;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import db.DbExceptions;
+import gui.util.Alerts;
 import gui.util.Constraints;
+import gui.util.Utils;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import model.entities.Autor;
+import model.services.AutorService;
 
 public class AutorFormController implements Initializable{
 	
 	private Autor entity;
+	
+	private AutorService service;
 	
 	
 	@FXML
@@ -33,18 +41,45 @@ public class AutorFormController implements Initializable{
 	private Button btCancel;
 	
 	public void setAutor(Autor entity) {
-		this.entity = entity;
+		this.entity = entity;		
+	}
+	
+	public void setAutorService(AutorService service) {
+		this.service = service;
+	}
+	
+	@FXML
+	public void onBtSaveAction(ActionEvent event) {
+		if(entity == null) {
+			throw new IllegalStateException("Entidade esá vazia");
+		}
+		if(service == null) {
+			throw new IllegalStateException("Seriço está vazia");
+		}
+		try {
+			
+			entity = getFormData();
+			service.saveOrUpdate(entity);
+			Utils.currentStage(event).close();
+			
+		}
+		catch (DbExceptions e) {
+			Alerts.showAlert("Error saving object", null, e.getMessage(), AlertType.ERROR);
+		}
+	}
+	
+	private Autor getFormData() {
 		
+		Autor autor = new Autor();
+				
+		autor.setNome(txtNome.getText());
+		
+		return autor;
 	}
-	
+
 	@FXML
-	public void onBtSaveAction() {
-		System.out.println("onBtSaveAction");
-	}
-	
-	@FXML
-	public void onBtCancelAction() {
-		System.out.println("onBtCancelAction");
+	public void onBtCancelAction(ActionEvent event) {
+		Utils.currentStage(event).close();
 	}
 	
 

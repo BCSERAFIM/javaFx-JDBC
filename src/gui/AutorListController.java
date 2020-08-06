@@ -94,6 +94,7 @@ public class AutorListController implements Initializable {
 			
 			AutorFormController controller = loader.getController();
 			controller.setAutor(obj);
+			controller.setAutorService(new AutorService());
 			controller.updateFormDate();
 			
 			Stage dialogStage = new Stage();

@@ -12,7 +12,6 @@ import dao.AutorDao;
 import db.DB;
 import db.DbExceptions;
 import model.entities.Autor;
-import model.entities.Livro;
 
 public class AutorDaoJDBC implements AutorDao {
 
@@ -20,6 +19,13 @@ public class AutorDaoJDBC implements AutorDao {
 
 	public AutorDaoJDBC(Connection conn) {
 		this.conn = conn;
+	}
+
+	private Autor instantiateAutor(ResultSet rs) throws SQLException {
+		Autor aut = new Autor();
+		aut.setId(rs.getInt("id"));
+		aut.setNome(rs.getString("nome"));
+		return aut;
 	}
 
 	@Override
@@ -53,13 +59,36 @@ public class AutorDaoJDBC implements AutorDao {
 
 	@Override
 	public void update(Autor autor) {
-		// TODO Auto-generated method stub
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("UPDATE autor " + "SET Nome = ? " + "WHERE id = ? ");
+
+			st.setString(1, autor.getNome());
+			st.setInt(2, autor.getId());
+			st.executeUpdate();
+
+		} catch (SQLException e) {
+			throw new DbExceptions(e.getMessage());
+		} finally {
+			DB.closeStatement(st);
+		}
 
 	}
 
 	@Override
 	public void deleteById(Integer id) {
-		// TODO Auto-generated method stub
+		PreparedStatement st = null;
+		try {
+			st = conn.prepareStatement("DELETE FROM autor WHERE id = ?");
+
+			st.setInt(1, id);
+			st.executeUpdate();
+
+		} catch (SQLException e) {
+			throw new DbExceptions(e.getMessage());
+		} finally {
+			DB.closeStatement(st);
+		}
 
 	}
 
@@ -94,9 +123,28 @@ public class AutorDaoJDBC implements AutorDao {
 	}
 
 	@Override
-	public List<Autor> findByLivro(Livro livro) {
-		// TODO Auto-generated method stub
-		return null;
+	public Autor findById(Integer id) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+
+			st = conn.prepareStatement("SELECT * FROM autor WHERE autor.id = ? ");
+
+			st.setInt(1, id);
+			rs = st.executeQuery();
+
+			if (rs.next()) {
+				Autor aut = instantiateAutor(rs);
+
+				return aut;
+			}
+			return null;
+		} catch (SQLException e) {
+			throw new DbExceptions(e.getMessage());
+		} finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}
 	}
 
 }

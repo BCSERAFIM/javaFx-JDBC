@@ -6,15 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import dao.LivroAutorDao;
 import db.DB;
 import db.DbExceptions;
 import model.entities.Autor;
-import model.entities.Livro;
 import model.entities.LivroAutor;
 
 public class LivroAutorDaoJDBC implements LivroAutorDao {
@@ -25,48 +22,20 @@ public class LivroAutorDaoJDBC implements LivroAutorDao {
 		this.conn = conn;
 	}
 
-	private Livro instantiateLivro(ResultSet rs) throws SQLException {
-		Livro livro = new Livro();
-		livro.setId(rs.getInt("idAutor"));
-		livro.setTitulo(rs.getString("DepNome"));
-		return livro;
-	}
-
 	private Autor instantiateAutor(ResultSet rs) throws SQLException {
 		Autor autor = new Autor();
-		autor.setId(rs.getInt("idLivro"));
+		autor.setId(rs.getInt("AutorId"));
 		autor.setNome(rs.getString("DepNome"));
 		return autor;
-
-	}
-
-	private LivroAutor instantiateLivroAutor(ResultSet rs) throws SQLException {
-		LivroAutor livroAutor = new LivroAutor();
-		livroAutor.setId(rs.getInt("id"));
-		livroAutor.setIdLivro(rs.getInt("idLivro"));
-		livroAutor.setIdAutor(rs.getInt("idAutor"));
-		return livroAutor;
-	}
-
-	private LivroAutor instantiateLivroAutor(ResultSet rs, Livro livro) throws SQLException {
-		LivroAutor livroAutor = new LivroAutor();
-		livroAutor.setId(rs.getInt("id"));
-		livroAutor.setLivro(livro);
-		return livroAutor;
 
 	}
 
 	private LivroAutor instantiateLivroAutor(ResultSet rs, Autor autor) throws SQLException {
 		LivroAutor livroAutor = new LivroAutor();
 		livroAutor.setId(rs.getInt("id"));
+		livroAutor.setTitulo(rs.getString("titulo"));
 		livroAutor.setAutor(autor);
 		return livroAutor;
-
-	}
-
-	@Override
-	public void deleteById(Integer id) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -75,10 +44,10 @@ public class LivroAutorDaoJDBC implements LivroAutorDao {
 		PreparedStatement st = null;
 
 		try {
-			st = conn.prepareStatement("INSERT INTO livro_autor " + "(idLivro, idAutor) " + "VALUES " + "(?,?) ",
+			st = conn.prepareStatement("INSERT INTO autor_livro " + "(titulo, AutorId) " + "VALUES " + "(?,?) ",
 					Statement.RETURN_GENERATED_KEYS);
-			st.setInt(1, livroAutor.getIdLivro());
-			st.setInt(2, livroAutor.getIdAutor());
+			st.setString(1, livroAutor.getTitulo());
+			st.setInt(2, livroAutor.getAutor().getId());
 
 			int rowsAffected = st.executeUpdate();
 
@@ -103,9 +72,9 @@ public class LivroAutorDaoJDBC implements LivroAutorDao {
 	public void update(LivroAutor livroAutor) {
 		PreparedStatement st = null;
 		try {
-			st = conn.prepareStatement("UPDATE livro_autor " + "SET idLivro = ?, idAutor = ? " + "where id = ? ");
-			st.setInt(1, livroAutor.getIdLivro());
-			st.setInt(2, livroAutor.getIdAutor());
+			st = conn.prepareStatement("UPDATE autor_livro " + "SET titulo = ?, AutorId = ? " + "where id = ? ");
+			st.setString(1, livroAutor.getTitulo());
+			st.setInt(2, livroAutor.getAutor().getId());
 			st.setInt(3, livroAutor.getId());
 
 			st.executeUpdate();
@@ -119,57 +88,45 @@ public class LivroAutorDaoJDBC implements LivroAutorDao {
 	}
 
 	@Override
-	public LivroAutor findByID(Integer id) {
+	public void deleteById(Integer id) {
 		PreparedStatement st = null;
-		ResultSet rs = null;
 		try {
-
-			st = conn.prepareStatement("SELECT * FROM livro_autor WHERE livro_autor.id = ? ");
-
+			st = conn.prepareStatement("DELETE FROM autor_livro WHERE Id = ? ");
 			st.setInt(1, id);
-			rs = st.executeQuery();
 
-			if (rs.next()) {
-				LivroAutor livroAutor = instantiateLivroAutor(rs);
+			st.executeUpdate();
 
-				return livroAutor;
-			}
-			return null;
 		} catch (SQLException e) {
-			throw new DbExceptions("Erro SQL: " + e.getMessage());
-		} finally {
+			throw new DbExceptions(e.getMessage());
+		}
+
+		finally {
+
 			DB.closeStatement(st);
-			DB.closeResultSet(rs);
+
 		}
 
 	}
 
 	@Override
-	public List<LivroAutor> findByLivro(Livro livro) {
+	public LivroAutor findById(Integer id) {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
 
 			st = conn.prepareStatement(
-					"SELECT livro_autor.*, autor.nome as DepNome " + "FROM livro_autor INNER JOIN autor "
-							+ "ON livro_autor.idAutor = autor.id " + "WHERE idLivro = ? ");
+					"SELECT autor_livro.*,autor.nome as DepNome " + "FROM autor_livro INNER JOIN autor "
+							+ "ON autor_livro.AutorId = autor.id " + "WHERE autor_livro.id = ?");
 
-			st.setInt(1, livro.getId());
+			st.setInt(1, id);
 			rs = st.executeQuery();
 
-			List<LivroAutor> listaLivroAutor = new ArrayList<>();
-			Map<Integer, Livro> map = new HashMap<>();
-			while (rs.next()) {
-				Livro liv = map.get(rs.getInt("idLivro"));
-				if (liv == null) {
-					liv = instantiateLivro(rs);
-					map.put(rs.getInt("idLivro"), liv);
-				}
-				LivroAutor obj = instantiateLivroAutor(rs, liv);
-				listaLivroAutor.add(obj);
+			if (rs.next()) {
+				Autor autor = instantiateAutor(rs);
+				LivroAutor livroAutor = instantiateLivroAutor(rs, autor);
+				return livroAutor;
 			}
-			return listaLivroAutor;
-
+			return null;
 		} catch (SQLException e) {
 			throw new DbExceptions("Erro SQL: " + e.getMessage());
 		} finally {
@@ -186,8 +143,8 @@ public class LivroAutorDaoJDBC implements LivroAutorDao {
 		try {
 
 			st = conn.prepareStatement(
-					"SELECT livro_autor.*, livro.titulo as DepNome " + "FROM livro_autor INNER JOIN livro "
-							+ "ON livro_autor.idLivro = livro.id " + "WHERE idAutor = ?");
+					"SELECT autor_livro.*, autor.nome as DepNome " + "FROM autor_livro INNER JOIN autor "
+							+ "ON autor_livro.AutorId = autor.id " + "WHERE AutorId = ? ");
 
 			st.setInt(1, autor.getId());
 			rs = st.executeQuery();
@@ -217,8 +174,8 @@ public class LivroAutorDaoJDBC implements LivroAutorDao {
 		ResultSet rs = null;
 		try {
 
-			st = conn.prepareStatement("SELECT livro_autor.*,autor.nome as DepName "
-					+ "FROM livro_autor INNER JOIN autor " + "ON livro_autor.idAutor= autor.id");
+			st = conn.prepareStatement("SELECT autor_livro.*,autor.nome as DepNome "
+					+ "FROM autor_livro INNER JOIN autor " + "ON autor_livro.AutorId= autor.id ");
 
 			rs = st.executeQuery();
 
@@ -226,11 +183,9 @@ public class LivroAutorDaoJDBC implements LivroAutorDao {
 
 			while (rs.next()) {
 
-				LivroAutor livroAutor = new LivroAutor();
-				livroAutor.setId(rs.getInt("id"));
-				livroAutor.setIdLivro(rs.getInt("idLivro"));
-				livroAutor.setIdAutor(rs.getInt("idAutor"));
-				listaLivroAutor.add(livroAutor);
+				Autor aut = instantiateAutor(rs);
+				LivroAutor obj = instantiateLivroAutor(rs, aut);
+				listaLivroAutor.add(obj);
 
 			}
 

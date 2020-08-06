@@ -3,7 +3,6 @@ package dao;
 import java.util.List;
 
 import model.entities.Autor;
-import model.entities.Livro;
 
 public interface AutorDao {
 
@@ -13,8 +12,8 @@ public interface AutorDao {
 
 	void deleteById(Integer id);
 
-	List<Autor> findAll();
+	Autor findById(Integer id);
 
-	List<Autor> findByLivro(Livro livro);
+	List<Autor> findAll();
 
 }

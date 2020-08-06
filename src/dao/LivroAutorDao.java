@@ -3,23 +3,19 @@ package dao;
 import java.util.List;
 
 import model.entities.Autor;
-import model.entities.Livro;
 import model.entities.LivroAutor;
-
 
 public interface LivroAutorDao {
 
-	void insert(LivroAutor livroAutor);
+	void insert(LivroAutor obj);
 
-	void update(LivroAutor livroAutor);
+	void update(LivroAutor obj);
 
 	void deleteById(Integer id);
 
-	LivroAutor findByID(Integer id);
+	LivroAutor findById(Integer id);
 
-	List<LivroAutor> findByLivro(Livro livro);
+	List<LivroAutor> findAll();
 
 	List<LivroAutor> findByAutor(Autor autor);
-	
-	List<LivroAutor> findAll();
 }

@@ -13,5 +13,14 @@ public class AutorService {
 	public List<Autor> findAll(){		
 		return dao.findAll();
 	}
+	
+	public void saveOrUpdate(Autor autor) {
+		if(autor.getId() == null) {
+			dao.insert(autor);
+		}
+		else {
+			dao.update(autor);
+		}
+	}
 
 }
