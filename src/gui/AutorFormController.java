@@ -96,10 +96,11 @@ public class AutorFormController implements Initializable{
 		
 		ValidationException exception = new ValidationException("Erro de Validação");
 		
+		autor.setId(Utils.tryParseToInt(txtId.getText()));
+		
 		if(txtNome.getText() == null || txtNome.getText().trim().equals("")) {
 			exception.addError("nome", "  O campo nao pode ser vazio");
-		}
-		
+		}		
 		autor.setNome(txtNome.getText());
 		
 		if (exception.getErrors().size() > 0) {
