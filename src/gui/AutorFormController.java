@@ -2,9 +2,14 @@ package gui;
 
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import db.DbExceptions;
+import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Constraints;
 import gui.util.Utils;
@@ -16,6 +21,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import model.entities.Autor;
+import model.exceptions.ValidationException;
 import model.services.AutorService;
 
 public class AutorFormController implements Initializable{
@@ -24,6 +30,11 @@ public class AutorFormController implements Initializable{
 	
 	private AutorService service;
 	
+	private List<DataChangeListener> dataChangeListeners = new ArrayList<>();
+	
+	public void subscribDataChangeListener(DataChangeListener listener) {
+		dataChangeListeners.add(listener);
+	}
 	
 	@FXML
 	private TextField txtId;
@@ -60,19 +71,41 @@ public class AutorFormController implements Initializable{
 			
 			entity = getFormData();
 			service.saveOrUpdate(entity);
+			notfyDataChangeListeners();
 			Utils.currentStage(event).close();
 			
+		}
+		catch(ValidationException e) {
+			setErrorMessages(e.getErrors());
 		}
 		catch (DbExceptions e) {
 			Alerts.showAlert("Error saving object", null, e.getMessage(), AlertType.ERROR);
 		}
 	}
 	
+	private void notfyDataChangeListeners() {
+		for(DataChangeListener listener : dataChangeListeners) {
+			listener.onDataChanged();
+		}
+		
+	}
+
 	private Autor getFormData() {
 		
 		Autor autor = new Autor();
-				
+		
+		ValidationException exception = new ValidationException("Erro de Validação");
+		
+		if(txtNome.getText() == null || txtNome.getText().trim().equals("")) {
+			exception.addError("nome", "  O campo nao pode ser vazio");
+		}
+		
 		autor.setNome(txtNome.getText());
+		
+		if (exception.getErrors().size() > 0) {
+			throw exception;
+			
+		}
 		
 		return autor;
 	}
@@ -102,6 +135,14 @@ public class AutorFormController implements Initializable{
 		
 		txtId.setText(String.valueOf(entity.getId()));
 		txtNome.setText(entity.getNome());
+	}
+	
+	private void setErrorMessages(Map<String, String>errors) {
+		Set<String> fields = errors.keySet();
+		
+		if(fields.contains("nome")) {
+			labelErrorNome.setText(errors.get("nome"));
+		}
 	}
 
 }

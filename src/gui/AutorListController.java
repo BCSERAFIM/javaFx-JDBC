@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import application.Main;
+import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.collections.FXCollections;
@@ -27,7 +28,7 @@ import javafx.stage.Stage;
 import model.entities.Autor;
 import model.services.AutorService;
 
-public class AutorListController implements Initializable {
+public class AutorListController implements Initializable, DataChangeListener {
 	
 	private AutorService service;
 	
@@ -95,6 +96,7 @@ public class AutorListController implements Initializable {
 			AutorFormController controller = loader.getController();
 			controller.setAutor(obj);
 			controller.setAutorService(new AutorService());
+			controller.subscribDataChangeListener(this);
 			controller.updateFormDate();
 			
 			Stage dialogStage = new Stage();
@@ -109,6 +111,12 @@ public class AutorListController implements Initializable {
 		catch(IOException e) {
 			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
 		}
+	}
+
+	@Override
+	public void onDataChanged() {
+		updateTableView();
+		
 	}
 	
 
