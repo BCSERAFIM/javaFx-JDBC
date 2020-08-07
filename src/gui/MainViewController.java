@@ -17,6 +17,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import model.services.AutorService;
+import model.services.LivroAutorService;
 
 
 public class MainViewController implements Initializable {
@@ -32,7 +33,10 @@ public class MainViewController implements Initializable {
 
 	@FXML
 	public void onMenuItemLivroAction() {
-		System.out.println("onMenuItemLivroAction");
+		loadView("/gui/LivroAutorList.fxml", (LivroAutorListController controller) -> {
+			controller.setLivroAutorService(new LivroAutorService());
+			controller.updateTableView();			
+		});
 
 	}
 
