@@ -126,7 +126,7 @@ public class AutorFormController implements Initializable{
 	
 	private void initializeNodes() {
 		Constraints.setTextFieldInteger(txtId);
-		Constraints.setTextFieldMaxLength(txtNome, 30);
+		Constraints.setTextFieldMaxLength(txtNome, 100);
 	}
 	
 	public void updateFormDate() {

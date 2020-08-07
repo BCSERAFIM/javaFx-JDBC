@@ -30,6 +30,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.entities.LivroAutor;
+import model.services.AutorService;
 import model.services.LivroAutorService;
 
 public class LivroAutorListController implements Initializable, DataChangeListener {
@@ -103,7 +104,8 @@ public class LivroAutorListController implements Initializable, DataChangeListen
 
 			LivroAutorFormController controller = loader.getController();
 			controller.setLivroAutor(obj);
-			controller.setLivroAutorService(new LivroAutorService());
+			controller.setServices(new LivroAutorService(), new AutorService());
+			controller.loadAssociatedObjects();
 			controller.subscribDataChangeListener(this);
 			controller.updateFormDate();
 
@@ -116,6 +118,7 @@ public class LivroAutorListController implements Initializable, DataChangeListen
 			dialogStage.showAndWait();
 
 		} catch (IOException e) {
+			e.printStackTrace();
 			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
 		}
 	}
