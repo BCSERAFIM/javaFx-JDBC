@@ -44,7 +44,7 @@ public class LivroAutorDaoJDBC implements LivroAutorDao {
 		PreparedStatement st = null;
 
 		try {
-			st = conn.prepareStatement("INSERT INTO autor_livro " + "(titulo, AutorId) " + "VALUES " + "(?,?) ",
+			st = conn.prepareStatement("INSERT INTO autor_livro " + "(titulo, AutorId) " + "VALUES " + "(?,?)",
 					Statement.RETURN_GENERATED_KEYS);
 			st.setString(1, livroAutor.getTitulo());
 			st.setInt(2, livroAutor.getAutor().getId());

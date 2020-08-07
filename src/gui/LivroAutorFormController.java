@@ -116,9 +116,13 @@ public class LivroAutorFormController implements Initializable {
 		}
 		livroAutor.setTitulo(txtNome.getText());
 
+		
+		livroAutor.setAutor(comboBoxAutor.getValue());
+		
+		
+		
 		if (exception.getErrors().size() > 0) {
 			throw exception;
-
 		}
 
 		return livroAutor;

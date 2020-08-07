@@ -14,12 +14,14 @@ public class LivroAutorService {
 		return dao.findAll();
 	}
 	
-	public void saveOrUpdate(LivroAutor autor) {
-		if(autor.getId() == null) {
-			dao.insert(autor);
+	public void saveOrUpdate(LivroAutor livroAutor) {
+		if(livroAutor.getId() == null) {
+			dao.insert(livroAutor);
+		
 		}
 		else {
-			dao.update(autor);
+			dao.update(livroAutor);
+			
 		}
 	}
 	
