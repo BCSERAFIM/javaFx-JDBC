@@ -45,6 +45,9 @@ public class LivroAutorListController implements Initializable, DataChangeListen
 
 	@FXML
 	private TableColumn<LivroAutor, String> tableColumnNome;
+	
+	@FXML
+	private TableColumn<LivroAutor, Integer> tableColumnAutorId;
 
 	@FXML
 	private TableColumn<LivroAutor, LivroAutor> tableColumnEDIT;
@@ -79,7 +82,9 @@ public class LivroAutorListController implements Initializable, DataChangeListen
 	private void initializeNodes() {
 		tableColumnId.setCellValueFactory(new PropertyValueFactory<>("id"));
 		tableColumnNome.setCellValueFactory(new PropertyValueFactory<>("titulo"));
-
+		tableColumnAutorId.setCellValueFactory(new PropertyValueFactory<>("autor"));
+		
+		
 		Stage stage = (Stage) Main.getMainScene().getWindow();
 		tableViewLivroAutor.prefHeightProperty().bind(stage.heightProperty());
 
